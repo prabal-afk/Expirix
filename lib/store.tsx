@@ -303,7 +303,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const { data: r, error: e } = await sb.auth.signUp({
       email: email.trim(),
       password,
-      options: { data: { shop_name: shopName.trim(), owner_name: ownerName.trim() } },
+      options: {
+        emailRedirectTo: `${window.location.origin}/dashboard`,
+        data: { shop_name: shopName.trim(), owner_name: ownerName.trim() },
+      },
     });
     if (e) return { ok: false, error: e.message };
     return { ok: true, needsConfirmation: !r.session };
