@@ -22,8 +22,3 @@ npm test          # run unit tests
 npm run build     # production build
 npm start         # serve the production build
 ```
-
-## Optional: cloud database
-
-Copy `.env.example` to `.env.local` and fill in the Supabase values. Without them the app runs in demo mode.
-The database schema is in `supabase/schema.sql`.
