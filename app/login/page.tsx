@@ -1,5 +1,6 @@
 "use client";
 
+import { LoginArt } from "@/components/login-art";
 import { Info, Leaf, ShieldCheck, Timer, TrendingDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -44,14 +45,15 @@ export default function LoginPage() {
 
   return (
     <div className="grid min-h-dvh lg:grid-cols-2">
-      <div className="hidden flex-col justify-between bg-brand-800 p-12 text-white lg:flex">
-        <span className="inline-flex items-center gap-2.5">
+      <div className="relative hidden flex-col justify-between overflow-hidden bg-brand-800 p-12 text-white lg:flex">
+        <LoginArt />
+        <span className="relative inline-flex items-center gap-2.5">
           <span className="grid h-10 w-10 place-items-center rounded-xl bg-white/15">
             <Leaf className="h-6 w-6" />
           </span>
           <span className="text-2xl font-extrabold tracking-tight">Expirix</span>
         </span>
-        <div>
+        <div className="relative">
           <h2 className="text-4xl font-extrabold leading-tight">Track Expiry.<br />Reduce Waste.<br />Sell Fresh.</h2>
           <ul className="mt-8 space-y-4 text-brand-100">
             <li className="flex gap-3"><Timer className="mt-0.5 h-5 w-5 shrink-0" /> See what is expiring before it becomes a loss.</li>
@@ -59,7 +61,7 @@ export default function LoginPage() {
             <li className="flex gap-3"><TrendingDown className="mt-0.5 h-5 w-5 shrink-0" /> Know exactly how much money waste is costing you.</li>
           </ul>
         </div>
-        <p className="text-sm text-brand-200">Built for kirana stores and small shops.</p>
+        <p className="relative text-sm text-brand-200">Built for kirana stores and small shops.</p>
       </div>
 
       <div className="flex items-center justify-center p-5">
