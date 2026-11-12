@@ -21,8 +21,8 @@ async function fetchAll<T>(sb: SupabaseClient, table: string, shopId: string): P
 
 export async function GET(req: Request) {
   const secret = process.env.CRON_SECRET;
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.STORAGE_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.STORAGE_SUPABASE_SERVICE_ROLE_KEY;
   if (!secret || !url || !key) {
     return NextResponse.json({ ok: false, error: "Server is not configured (CRON_SECRET, NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)." }, { status: 503 });
   }
