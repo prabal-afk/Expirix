@@ -33,8 +33,19 @@ export function LoginArt() {
           <path d="M20 850 Q 60 720 110 595" />
         </g>
 
+        {/* calendar card */}
+        <g transform="translate(410 120) rotate(6)">
+          <rect width="150" height="130" rx="16" fill="#ffffff" fillOpacity="0.08" stroke="#bbf7d0" strokeOpacity="0.28" strokeWidth="2" />
+          <rect width="150" height="34" rx="16" fill="#ffffff" fillOpacity="0.10" />
+          {Array.from({ length: 15 }).map((_, i) => (
+            <circle key={i} cx={22 + (i % 5) * 26.5} cy={62 + Math.floor(i / 5) * 24} r="5.5"
+              fill={i === 7 ? "#f87171" : i === 4 || i === 6 ? "#fbbf24" : "#bbf7d0"} fillOpacity={i === 7 || i === 4 || i === 6 ? 0.9 : 0.22} />
+          ))}
+        </g>
+      </svg>
+      <svg className="absolute inset-x-0 bottom-20 h-40 w-full px-8 [@media(max-height:800px)]:h-24 [@media(max-height:680px)]:hidden" viewBox="-260 -50 520 130" preserveAspectRatio="xMidYMax meet" fill="none">
         {/* shelf of products with freshness rings */}
-        <g transform="translate(300 650)">
+        <g>
           <line x1="-250" y1="70" x2="250" y2="70" stroke="#bbf7d0" strokeOpacity="0.22" strokeWidth="3" strokeLinecap="round" />
           <g fill="#bbf7d0" fillOpacity="0.13" stroke="#bbf7d0" strokeOpacity="0.30" strokeWidth="2">
             <rect x="-230" y="10" width="46" height="60" rx="8" />
@@ -52,15 +63,6 @@ export function LoginArt() {
           <circle cx="50" cy="0" r="6" fill="#22c55e" />
         </g>
 
-        {/* calendar card */}
-        <g transform="translate(410 120) rotate(6)">
-          <rect width="150" height="130" rx="16" fill="#ffffff" fillOpacity="0.08" stroke="#bbf7d0" strokeOpacity="0.28" strokeWidth="2" />
-          <rect width="150" height="34" rx="16" fill="#ffffff" fillOpacity="0.10" />
-          {Array.from({ length: 15 }).map((_, i) => (
-            <circle key={i} cx={22 + (i % 5) * 26.5} cy={62 + Math.floor(i / 5) * 24} r="5.5"
-              fill={i === 7 ? "#f87171" : i === 4 || i === 6 ? "#fbbf24" : "#bbf7d0"} fillOpacity={i === 7 || i === 4 || i === 6 ? 0.9 : 0.22} />
-          ))}
-        </g>
       </svg>
     </div>
   );
