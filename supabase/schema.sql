@@ -260,3 +260,6 @@ end $$;
 
 revoke all on function public.record_movement(uuid, text, numeric, text) from public, anon;
 grant execute on function public.record_movement(uuid, text, numeric, text) to authenticated;
+
+-- Make the API pick up the new tables immediately.
+notify pgrst, 'reload schema';
