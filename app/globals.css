@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --color-brand-50: #f0fdf4;
+  --color-brand-100: #dcfce7;
+  --color-brand-200: #bbf7d0;
+  --color-brand-300: #86efac;
+  --color-brand-500: #22c55e;
+  --color-brand-600: #15803d;
+  --color-brand-700: #166534;
+  --color-brand-800: #14532d;
+  --color-brand-900: #0f3d22;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  background: #f5f8f6;
+  color: #0f172a;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Big, easy-to-tap targets on touch devices */
+button,
+a,
+select,
+input,
+summary {
+  touch-action: manipulation;
+}
+
+:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
+}
+
+dialog {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  max-width: 100vw;
+  max-height: 100dvh;
+}
+dialog::backdrop {
+  background: rgb(15 23 42 / 0.5);
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* keep focused / scrolled-to fields clear of the sticky action bar and bottom navigation */
+html {
+  scroll-padding-top: 5rem;
+  scroll-padding-bottom: 12rem;
+}
