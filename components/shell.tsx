@@ -6,7 +6,6 @@ import {
   Bell,
   CalendarDays,
   ChevronDown,
-  Leaf,
   LayoutDashboard,
   LogOut,
   Package,
@@ -25,6 +24,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { isActiveAlert } from "@/lib/alerts";
 import { matchesQuery } from "@/lib/expiry";
 import { useApp } from "@/lib/store";
+import { BrandMark } from "./brand-mark";
 import { Button, cx, Spinner } from "./ui";
 import { UIProvider, useUI } from "./ui-context";
 
@@ -32,7 +32,7 @@ export function Logo({ className, compact }: { className?: string; compact?: boo
   return (
     <span className={cx("inline-flex items-center gap-2.5", className)}>
       <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand-600 text-white shadow-sm">
-        <Leaf className="h-5 w-5" aria-hidden />
+        <BrandMark className="h-6 w-6" />
       </span>
       <span className={cx("text-xl font-extrabold tracking-tight text-slate-900", compact && "max-sm:sr-only")}>Expirix</span>
     </span>

@@ -1,7 +1,8 @@
 "use client";
 
+import { BrandMark } from "@/components/brand-mark";
 import { LoginArt } from "@/components/login-art";
-import { Info, Leaf, ShieldCheck, Timer, TrendingDown } from "lucide-react";
+import { Info, ShieldCheck, Timer, TrendingDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Logo } from "@/components/shell";
@@ -48,8 +49,8 @@ export default function LoginPage() {
       <div className="relative hidden flex-col justify-between overflow-hidden bg-brand-800 p-12 text-white lg:flex">
         <LoginArt />
         <span className="relative inline-flex items-center gap-2.5">
-          <span className="grid h-10 w-10 place-items-center rounded-xl bg-white/15">
-            <Leaf className="h-6 w-6" />
+          <span className="grid h-10 w-10 place-items-center rounded-xl bg-white text-brand-700">
+            <BrandMark className="h-7 w-7" cut="#ffffff" />
           </span>
           <span className="text-2xl font-extrabold tracking-tight">Expirix</span>
         </span>
