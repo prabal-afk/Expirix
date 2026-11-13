@@ -2,6 +2,11 @@ import type { Metadata, Viewport } from "next";
 import "@fontsource-variable/inter";
 import "./globals.css";
 import { AppProvider } from "@/lib/store";
+import { Intro } from "@/components/intro";
+import { INTRO_KEY } from "@/lib/intro-key";
+
+// Runs before first paint: play the intro only if this browser has not seen it and motion is allowed.
+const introScript = `try{if(!localStorage.getItem("${INTRO_KEY}")&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.dataset.intro="play"}catch(e){}`;
 
 export const metadata: Metadata = {
   title: "Expirix — Track Expiry. Reduce Waste. Sell Fresh.",
@@ -16,8 +21,12 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: introScript }} />
+      </head>
       <body>
+        <Intro />
         <AppProvider>{children}</AppProvider>
       </body>
     </html>
