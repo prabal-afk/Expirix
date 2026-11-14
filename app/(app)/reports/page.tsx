@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n-core";
 import { Download, Info } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
@@ -115,7 +116,7 @@ export default function ReportsPage() {
 
   return (
     <div className="space-y-8">
-      <PageHeader title="Reports & Analytics" subtitle={`Period: ${rangeLabel}`} />
+      <PageHeader title={t("Reports & Analytics")} subtitle={`Period: ${rangeLabel}`} />
 
       <Card className="flex flex-col gap-3 p-4 sm:flex-row sm:items-end">
         <div className="sm:w-56">
@@ -154,17 +155,17 @@ export default function ReportsPage() {
       {/* ---------------- inventory ---------------- */}
       <section id="inventory" aria-labelledby="h-inv">
         <SectionTitle action={<ExportBtn onClick={exportInventory} />}>
-          <span id="h-inv">Inventory report (as of today)</span>
+          <span id="h-inv">{t("Inventory report (as of today)")}</span>
         </SectionTitle>
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
-          <Metric label="Total stock units" value={formatNumber(inv.totalUnits)} />
-          <Metric label="Inventory purchase value" value={money(inv.purchaseValue)} sub="what you paid for stock on hand" />
-          <Metric label="Estimated retail value" value={money(inv.retailValueEligible)} sub="sellable (non-expired) stock only" className="col-span-2 lg:col-span-1" />
+          <Metric label={t("Total stock units")} value={formatNumber(inv.totalUnits)} />
+          <Metric label={t("Inventory purchase value")} value={money(inv.purchaseValue)} sub="what you paid for stock on hand" />
+          <Metric label={t("Estimated retail value")} value={money(inv.retailValueEligible)} sub="sellable (non-expired) stock only" className="col-span-2 lg:col-span-1" />
         </div>
         <Card className="mt-3 p-4">
           <h3 className="mb-2 text-sm font-semibold">Stock by category (units)</h3>
           {inv.categories.length === 0 ? (
-            <EmptyState title="No stock yet" />
+            <EmptyState title={t("No stock yet")} />
           ) : (
             <div className="h-64" role="img" aria-label="Stacked bar chart of sellable and expired units by category">
               <ResponsiveContainer width="100%" height="100%">
@@ -186,7 +187,7 @@ export default function ReportsPage() {
       {/* ---------------- expiry ---------------- */}
       <section id="expiry" aria-labelledby="h-exp">
         <SectionTitle action={<ExportBtn onClick={exportExpiry} />}>
-          <span id="h-exp">Expiry report</span>
+          <span id="h-exp">{t("Expiry report")}</span>
         </SectionTitle>
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           <Metric label="Batches expiring in period" value={String(exp.expiring.length)} sub="still in stock, not yet expired" />
@@ -203,11 +204,11 @@ export default function ReportsPage() {
       {/* ---------------- waste ---------------- */}
       <section id="waste" aria-labelledby="h-waste">
         <SectionTitle action={<ExportBtn onClick={exportWaste} />}>
-          <span id="h-waste">Waste report</span>
+          <span id="h-waste">{t("Waste report")}</span>
         </SectionTitle>
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          <Metric label="Quantity discarded" value={formatNumber(waste.qty)} sub={`${waste.expiredQty} expired · ${waste.damagedQty} damaged`} />
-          <Metric label="Estimated waste cost" value={money(waste.cost)} sub="purchase price × quantity" tone="red" testId="waste-cost" />
+          <Metric label={t("Quantity discarded")} value={formatNumber(waste.qty)} sub={`${waste.expiredQty} expired · ${waste.damagedQty} damaged`} />
+          <Metric label={t("Estimated waste cost")} value={money(waste.cost)} sub="purchase price × quantity" tone="red" testId="waste-cost" />
           <Metric label="Expired stock cost" value={money(waste.expiredCost)} />
           <Metric label="Damaged stock cost" value={money(waste.damagedCost)} />
         </div>
@@ -256,10 +257,10 @@ export default function ReportsPage() {
       {/* ---------------- financial ---------------- */}
       <section id="financial" aria-labelledby="h-fin">
         <SectionTitle action={<ExportBtn onClick={exportFinancial} />}>
-          <span id="h-fin">Financial insights (estimates)</span>
+          <span id="h-fin">{t("Financial insights (estimates)")}</span>
         </SectionTitle>
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          <Metric label="Inventory at risk" value={money(atRiskNote)} sub={`expiring in ≤ ${settings.expiry_threshold_days} days, at cost`} tone="amber" />
+          <Metric label={t("Inventory at risk")} value={money(atRiskNote)} sub={`expiring in ≤ ${settings.expiry_threshold_days} days, at cost`} tone="amber" />
           <Metric label="Expired, not yet removed" value={money(exp.expiredOnShelfCost)} sub="loss if never sold" tone="red" />
           <Metric label="Recorded losses (period)" value={money(waste.cost)} sub="expired + damaged removed" />
           <Metric label="Average monthly waste" value={money(avgMonthly)} sub={`over ${trend.length} month${trend.length === 1 ? "" : "s"}`} />

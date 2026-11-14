@@ -1,23 +1,15 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { planAlertSync } from "@/lib/alerts";
 import { todayISO } from "@/lib/dates";
-import type { AppNotification, Batch, Product, Settings } from "@/lib/types";
+import { buildDigest, digestHtml, digestSubject, digestSummaryLine, digestText } from "@/lib/digest";
+import { buildViews } from "@/lib/expiry";
+import { APP_URL, brevoConfigured, pushConfigured, sendBrevoEmail, sendPush, type PushSub } from "@/lib/server/notify";
+import { loadShop } from "@/lib/server/shop";
 
 // Runs once a day (see vercel.json). Creates the day's expiry alerts for every shop, even if nobody opened the app.
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
-
-async function fetchAll<T>(sb: SupabaseClient, table: string, shopId: string): Promise<T[]> {
-  const out: T[] = [];
-  for (let from = 0; ; from += 1000) {
-    const { data, error } = await sb.from(table).select("*").eq("shop_id", shopId).order("id").range(from, from + 999);
-    if (error) throw new Error(`${table}: ${error.message}`);
-    out.push(...((data ?? []) as T[]));
-    if (!data || data.length < 1000) break;
-  }
-  return out;
-}
 
 export async function GET(req: Request) {
   const secret = process.env.CRON_SECRET;
@@ -36,23 +28,17 @@ export async function GET(req: Request) {
 
   let created = 0;
   let patched = 0;
+  let emails = 0;
+  let pushes = 0;
   const failures: { shop: string; error: string }[] = [];
+  const canEmail = brevoConfigured();
+  const canPush = pushConfigured();
   for (const shop of shops ?? []) {
     try {
-      const { data: prefs, error: pe } = await sb.from("user_preferences").select("*").eq("shop_id", shop.id).single();
-      if (pe || !prefs) throw new Error(pe?.message ?? "no preferences");
-      const settings = { ...prefs, shop_id: shop.id, shop_name: shop.name, owner_name: shop.owner_name, phone: shop.phone, email: shop.email, address: shop.address } as unknown as Settings;
-      const [products, batches, notifications] = await Promise.all([
-        fetchAll<Product>(sb, "products", shop.id),
-        fetchAll<Batch>(sb, "batches", shop.id),
-        fetchAll<AppNotification>(sb, "notifications", shop.id),
-      ]);
-      const plan = planAlertSync(
-        { products, batches: batches.map((b) => ({ ...b, quantity: Number(b.quantity) })), notifications, settings },
-        todayISO(settings.timezone),
-        new Date().toISOString(),
-        () => crypto.randomUUID(),
-      );
+      const snap = await loadShop(sb, shop.id);
+      const { settings, products, batches, notifications } = snap;
+      const today = todayISO(settings.timezone);
+      const plan = planAlertSync({ products, batches, notifications, settings }, today, new Date().toISOString(), () => crypto.randomUUID());
       if (plan.create.length) {
         const { error: ie } = await sb.from("notifications").upsert(plan.create, { onConflict: "batch_id,level", ignoreDuplicates: true });
         if (ie) throw new Error(ie.message);
@@ -66,9 +52,46 @@ export async function GET(req: Request) {
       }
       created += plan.create.length;
       patched += plan.patch.length;
+
+      // Daily summary by email and push, at most once per shop per day.
+      if ((canEmail || canPush) && snap.lastDigestOn !== today) {
+        const digest = buildDigest(buildViews({ products, batches }, settings, today), settings, today);
+        if (digest.total > 0) {
+          let delivered = false;
+          if (canEmail && settings.email_digest) {
+            const { data: profile } = await sb.from("profiles").select("id").eq("shop_id", shop.id).limit(1).maybeSingle();
+            const { data: user } = profile ? await sb.auth.admin.getUserById(profile.id) : { data: null };
+            const to = user?.user?.email;
+            if (to) {
+              try {
+                await sendBrevoEmail({
+                  to,
+                  subject: digestSubject(digest),
+                  html: digestHtml(digest, { appUrl: APP_URL }),
+                  text: digestText(digest, { appUrl: APP_URL }),
+                });
+                emails++;
+                delivered = true;
+              } catch (e) {
+                failures.push({ shop: shop.id, error: `email: ${e instanceof Error ? e.message : String(e)}` });
+              }
+            }
+          }
+          if (canPush) {
+            const { data: subs } = await sb.from("push_subscriptions").select("id, endpoint, p256dh, auth").eq("shop_id", shop.id);
+            if (subs?.length) {
+              const r = await sendPush(subs as PushSub[], { title: `Expirix: ${digest.shopName}`, body: digestSummaryLine(digest), url: "/alerts" });
+              pushes += r.sent;
+              if (r.sent) delivered = true;
+              if (r.gone.length) await sb.from("push_subscriptions").delete().in("id", r.gone);
+            }
+          }
+          if (delivered) await sb.from("user_preferences").update({ last_digest_on: today }).eq("shop_id", shop.id);
+        }
+      }
     } catch (e) {
       failures.push({ shop: shop.id, error: e instanceof Error ? e.message : String(e) });
     }
   }
-  return NextResponse.json({ ok: failures.length === 0, shops: shops?.length ?? 0, alertsCreated: created, alertsUpdated: patched, failures });
+  return NextResponse.json({ ok: failures.length === 0, shops: shops?.length ?? 0, alertsCreated: created, alertsUpdated: patched, emailsSent: emails, pushesSent: pushes, failures });
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n-core";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -14,7 +15,7 @@ function AddInner() {
   return (
     <div className="mx-auto max-w-3xl">
       <Link href="/inventory" className="mb-3 inline-flex items-center gap-1 text-sm font-semibold text-slate-600 hover:text-slate-900">
-        <ArrowLeft className="h-4 w-4" /> Inventory
+        <ArrowLeft className="h-4 w-4" /> {t("Inventory")}
       </Link>
       <PageHeader
         title={product ? "Add a new batch" : "Add Product"}

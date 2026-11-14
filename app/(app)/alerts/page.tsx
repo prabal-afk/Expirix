@@ -1,19 +1,21 @@
 "use client";
 
-import { Bell, BellRing, Check, CheckCheck, Eye, EyeOff, Info, X } from "lucide-react";
+import { t } from "@/lib/i18n-core";
+import { Bell, BellRing, Check, CheckCheck, Eye, EyeOff, Info, MessageCircle, X } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useUI } from "@/components/ui-context";
 import { Button, Card, EmptyState, LevelBadge, LinkButton, PageHeader, Select, cx } from "@/components/ui";
 import { LEVEL_LABEL, LEVEL_RANK, isActiveAlert } from "@/lib/alerts";
 import { daysLabel, formatDate, formatDateTime } from "@/lib/dates";
+import { buildDigest, digestText } from "@/lib/digest";
 import { useApp } from "@/lib/store";
 import { ALERT_LEVELS, type AlertLevel } from "@/lib/types";
 
 type Tab = "active" | "unread" | "history";
 
 export default function AlertsPage() {
-  const { data, views, settings, markRead, dismiss, enableBrowserNotifications, saveSettings, toast, mode } = useApp();
+  const { data, views, settings, today, markRead, dismiss, enableBrowserNotifications, saveSettings, toast, mode } = useApp();
   const { openMovement } = useUI();
   const [tab, setTab] = useState<Tab>("active");
   const [level, setLevel] = useState<"" | AlertLevel>("");
@@ -29,18 +31,29 @@ export default function AlertsPage() {
       .sort((a, b) => LEVEL_RANK[b.level] - LEVEL_RANK[a.level] || a.expiry_date.localeCompare(b.expiry_date) || b.created_at.localeCompare(a.created_at));
   }, [all, active, unread, tab, level]);
 
+  const digest = useMemo(() => buildDigest(views, settings, today), [views, settings, today]);
+  function shareWhatsApp() {
+    const text = digestText(digest, { whatsapp: true, appUrl: window.location.origin });
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener");
+  }
+
   const supported = typeof Notification !== "undefined";
   const perm = supported ? Notification.permission : "denied";
 
   return (
     <div>
       <PageHeader
-        title="Alerts & Notifications"
+        title={t("Alerts & Notifications")}
         subtitle={unread.length ? `${unread.length} unread · ${active.length} active` : `${active.length} active alert${active.length === 1 ? "" : "s"}`}
         actions={
-          <Button variant="outline" disabled={unread.length === 0} onClick={() => void markRead(unread.map((n) => n.id))}>
-            <CheckCheck className="h-4 w-4" /> Mark all as read
-          </Button>
+          <>
+            <Button variant="outline" disabled={digest.total === 0} onClick={shareWhatsApp} title="Opens WhatsApp with today's expiry list ready to send">
+              <MessageCircle className="h-4 w-4" /> {t("Share on WhatsApp")}
+            </Button>
+            <Button variant="outline" disabled={unread.length === 0} onClick={() => void markRead(unread.map((n) => n.id))}>
+              <CheckCheck className="h-4 w-4" /> {t("Mark all as read")}
+            </Button>
+          </>
         }
       />
 
@@ -51,7 +64,7 @@ export default function AlertsPage() {
           </p>
           <ul className="mt-2 space-y-1 text-sm text-slate-700">
             <li>
-              One alert per batch for the current level: <strong>Upcoming</strong> ({settings.alert_upcoming_days}d), <strong>Warning</strong> ({settings.alert_warning_days}d), <strong>High priority</strong> ({settings.alert_high_days}d), <strong>Critical</strong> ({settings.alert_critical_days}d), <strong>Expires today</strong>, <strong>Expired</strong>.
+              One alert per batch for the current level: <strong>{t("Upcoming")}</strong> ({settings.alert_upcoming_days}d), <strong>{t("Warning")}</strong> ({settings.alert_warning_days}d), <strong>{t("High priority")}</strong> ({settings.alert_high_days}d), <strong>{t("Critical")}</strong> ({settings.alert_critical_days}d), <strong>{t("Expires today")}</strong>, <strong>{t("Expired")}</strong>.
             </li>
             <li>No duplicates. When a batch moves to the next level, the older alert moves to History.</li>
             <li>Dismissing an alert only hides it. The batch stays flagged in your inventory and expired stock is never sellable.</li>
@@ -60,7 +73,7 @@ export default function AlertsPage() {
         </Card>
         <Card className="p-4">
           <p className="flex items-center gap-2 text-sm font-semibold">
-            <BellRing className="h-4 w-4 text-brand-700" /> Browser notifications
+            <BellRing className="h-4 w-4 text-brand-700" /> {t("Browser notifications")}
           </p>
           {!supported ? (
             <p className="mt-2 text-sm text-slate-700">This browser does not support notifications. In-app alerts still work.</p>
@@ -109,10 +122,10 @@ export default function AlertsPage() {
           ))}
         </div>
         <Select aria-label="Filter by severity" value={level} onChange={(e) => setLevel(e.target.value as AlertLevel | "")} className="sm:max-w-52">
-          <option value="">All severities</option>
+          <option value="">{t("All severities")}</option>
           {ALERT_LEVELS.map((l) => (
             <option key={l} value={l}>
-              {LEVEL_LABEL[l]}
+              {t(LEVEL_LABEL[l])}
             </option>
           ))}
         </Select>
@@ -147,23 +160,23 @@ export default function AlertsPage() {
                   </div>
                   <dl className="mt-3 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
                     <div>
-                      <dt className="text-xs text-slate-500">Batch</dt>
+                      <dt className="text-xs text-slate-500">{t("Batch")}</dt>
                       <dd>{n.batch_no ?? "—"}</dd>
                     </div>
                     <div>
-                      <dt className="text-xs text-slate-500">Quantity remaining</dt>
+                      <dt className="text-xs text-slate-500">{t("Quantity remaining")}</dt>
                       <dd className="font-semibold">{qty}{live ? ` ${live.product.unit}` : ""}</dd>
                     </div>
                     <div>
-                      <dt className="text-xs text-slate-500">Expiry date</dt>
+                      <dt className="text-xs text-slate-500">{t("Expiry date")}</dt>
                       <dd>{formatDate(n.expiry_date, settings.date_format)}</dd>
                     </div>
                     <div>
-                      <dt className="text-xs text-slate-500">Today</dt>
+                      <dt className="text-xs text-slate-500">{t("Today")}</dt>
                       <dd className={cx(days !== undefined && days <= 1 && "font-semibold text-red-700")}>{days !== undefined ? daysLabel(days) : "—"}</dd>
                     </div>
                   </dl>
-                  {n.level === "expired" && !isHistory && <p className="mt-3 rounded-lg bg-red-100 px-3 py-2 text-sm font-medium text-red-900">Do not sell. Remove this batch from the shelf and record the removal.</p>}
+                  {n.level === "expired" && !isHistory && <p className="mt-3 rounded-lg bg-red-100 px-3 py-2 text-sm font-medium text-red-900">{t("Do not sell. Remove this batch from the shelf and record the removal.")}</p>}
                   {!isHistory && (
                     <div className="mt-3 flex flex-wrap gap-2">
                       <LinkButton href={`/inventory/${n.product_id}`} variant="outline" size="sm">

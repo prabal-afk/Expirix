@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n-core";
 import {
   AlertTriangle,
   BarChart3,
@@ -76,7 +77,7 @@ export function Shell({ children }: { children: ReactNode }) {
           <h1 className="mt-3 text-lg font-bold">We couldn’t load your data</h1>
           <p className="mt-2 text-sm text-slate-700">{error}</p>
           <div className="mt-4 flex justify-center gap-2">
-            <Button onClick={() => location.reload()}>Try again</Button>
+            <Button onClick={() => location.reload()}>{t("Try again")}</Button>
             <Button variant="outline" onClick={() => void signOut().then(() => router.replace("/login"))}>
               {mode === "supabase" ? "Sign out" : "Back"}
             </Button>
@@ -113,11 +114,11 @@ function ShellInner({ children }: { children: ReactNode }) {
       <aside className="no-print fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-slate-200 bg-white lg:flex">
         <div className="px-5 pb-3 pt-5">
           <Logo />
-          <p className="mt-1.5 text-xs font-medium text-brand-700">Track Expiry. Reduce Waste. Sell Fresh.</p>
+          <p className="mt-1.5 text-xs font-medium text-brand-700">{t("Track Expiry. Reduce Waste. Sell Fresh.")}</p>
         </div>
         <div className="px-4 pb-3">
           <Link href="/inventory/add" className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-brand-600 text-[15px] font-semibold text-white shadow-sm hover:bg-brand-700">
-            <Plus className="h-5 w-5" /> Add Product
+            <Plus className="h-5 w-5" /> {t("Add Product")}
           </Link>
         </div>
         <nav className="flex-1 space-y-1 overflow-y-auto px-3" aria-label="Main">
@@ -134,7 +135,7 @@ function ShellInner({ children }: { children: ReactNode }) {
                 )}
               >
                 <n.icon className="h-5 w-5" aria-hidden />
-                <span className="flex-1">{n.label}</span>
+                <span className="flex-1">{t(n.label)}</span>
                 {n.href === "/alerts" && unread > 0 && (
                   <span className="rounded-full bg-red-600 px-2 py-0.5 text-xs font-bold text-white" aria-label={`${unread} unread alerts`}>
                     {unread}
@@ -162,7 +163,7 @@ function ShellInner({ children }: { children: ReactNode }) {
             <button type="button" onClick={() => setMobileSearch((s) => !s)} className="grid h-11 w-11 place-items-center rounded-xl text-slate-700 hover:bg-slate-100 lg:hidden" aria-label="Search">
               <Search className="h-5 w-5" />
             </button>
-            <button type="button" onClick={openScanner} className="grid h-11 w-11 place-items-center rounded-xl text-slate-700 hover:bg-slate-100" aria-label="Scan barcode">
+            <button type="button" onClick={openScanner} className="grid h-11 w-11 place-items-center rounded-xl text-slate-700 hover:bg-slate-100" aria-label={t("Scan barcode")}>
               <ScanBarcode className="h-5 w-5" />
             </button>
             <QuickActions />
@@ -170,7 +171,7 @@ function ShellInner({ children }: { children: ReactNode }) {
               <Bell className="h-5 w-5" />
               {unread > 0 && <span className="absolute right-1 top-1 grid h-5 min-w-5 place-items-center rounded-full bg-red-600 px-1 text-[11px] font-bold text-white">{unread > 99 ? "99+" : unread}</span>}
             </Link>
-            <Link href="/inventory/add" aria-label="Add Product" className="ml-1 inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-xl bg-brand-600 px-2.5 text-[15px] sm:px-3.5 font-semibold text-white shadow-sm hover:bg-brand-700 lg:hidden">
+            <Link href="/inventory/add" aria-label={t("Add Product")} className="ml-1 inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-xl bg-brand-600 px-2.5 text-[15px] sm:px-3.5 font-semibold text-white shadow-sm hover:bg-brand-700 lg:hidden">
               <Plus className="h-5 w-5" /> <span className="hidden sm:inline">Add</span>
             </Link>
             <div className="lg:hidden">
@@ -186,7 +187,7 @@ function ShellInner({ children }: { children: ReactNode }) {
         {mode === "demo" && (
           <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 bg-sky-50 px-4 py-2 text-center text-xs font-medium text-sky-900" data-testid="demo-banner">
             <span>
-              <strong>Demo mode</strong> — sample data stored only in this browser (not a real shop).
+              <strong>{t("Demo mode")}</strong> — sample data stored only in this browser (not a real shop).
             </span>
             <Link href="/settings#data" className="inline-flex min-h-9 items-center px-2 underline underline-offset-2">
               Reset demo data
@@ -212,7 +213,7 @@ function ShellInner({ children }: { children: ReactNode }) {
                   <span className={cx("grid h-7 w-12 place-items-center rounded-full", active && "bg-brand-100")}>
                     <n.icon className="h-5 w-5" aria-hidden />
                   </span>
-                  {"short" in n ? n.short : n.label}
+                  {t("short" in n ? n.short : n.label)}
                   {n.href === "/alerts" && unread > 0 && (
                     <span className="absolute right-4 top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white">{unread > 99 ? "99+" : unread}</span>
                   )}
@@ -278,10 +279,10 @@ function ProfileMenu({ initials, compact, placement }: { initials: string; compa
           <div className="px-3 py-2">
             <p className="truncate text-sm font-semibold">{settings.shop_name}</p>
             <p className="truncate text-xs text-slate-600">{settings.owner_name}{mode === "supabase" && userEmail ? ` · ${userEmail}` : ""}</p>
-            {mode === "demo" && <p className="mt-1 text-xs font-medium text-sky-800">Demo account</p>}
+            {mode === "demo" && <p className="mt-1 text-xs font-medium text-sky-800">{t("Demo account")}</p>}
           </div>
           <Link role="menuitem" href="/settings" onClick={() => setOpen(false)} className="flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-medium hover:bg-slate-100">
-            <SettingsIcon className="h-4 w-4" /> Settings
+            <SettingsIcon className="h-4 w-4" /> {t("Settings")}
           </Link>
           <button
             role="menuitem"
@@ -319,7 +320,7 @@ function QuickActions() {
   return (
     <div ref={ref} className="relative hidden sm:block">
       <button type="button" onClick={() => setOpen((o) => !o)} aria-haspopup="menu" aria-expanded={open} className="flex min-h-11 items-center gap-1.5 rounded-xl px-3 text-sm font-semibold text-slate-700 hover:bg-slate-100">
-        <Zap className="h-4 w-4 text-amber-500" /> Quick actions
+        <Zap className="h-4 w-4 text-amber-500" /> {t("Quick actions")}
       </button>
       {open && (
         <div role="menu" className="absolute right-0 top-full z-40 mt-2 w-64 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl">
@@ -382,7 +383,7 @@ function GlobalSearch({ autoFocus, onDone }: { autoFocus?: boolean; onDone?: () 
       <input
         type="search"
         aria-label="Search products, brands, barcodes or batch numbers"
-        placeholder="Search product, brand, barcode or batch…"
+        placeholder={t("Search product, brand, barcode or batch…")}
         value={q}
         autoFocus={autoFocus}
         onChange={(e) => {

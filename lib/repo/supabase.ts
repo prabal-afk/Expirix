@@ -85,6 +85,7 @@ export function makeSupabaseRepo(sb: SupabaseClient): Repo {
         timezone: String(p.timezone),
         in_app_alerts: Boolean(p.in_app_alerts),
         browser_notifications: Boolean(p.browser_notifications),
+        email_digest: p.email_digest !== false,
       };
       return {
         settings,
@@ -186,6 +187,7 @@ export function makeSupabaseRepo(sb: SupabaseClient): Repo {
           timezone: s.timezone,
           in_app_alerts: s.in_app_alerts,
           browser_notifications: s.browser_notifications,
+          email_digest: s.email_digest,
         }),
       );
     },

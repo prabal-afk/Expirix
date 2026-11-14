@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n-core";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -60,21 +61,21 @@ export default function CalendarPage() {
 
   return (
     <div>
-      <PageHeader title="Expiry Calendar" subtitle="See which days stock expires. Tap a date to see the products." />
+      <PageHeader title={t("Expiry Calendar")} subtitle={t("See which days stock expires. Tap a date to see the products.")} />
 
       <div className="mb-4 flex flex-col gap-3 sm:flex-row">
         <Select aria-label="Filter by category" value={category} onChange={(e) => setCategory(e.target.value)} className="sm:max-w-56">
-          <option value="">All categories</option>
+          <option value="">{t("All categories")}</option>
           {CATEGORIES.map((c) => (
             <option key={c}>{c}</option>
           ))}
         </Select>
         <Select aria-label="Filter by status" value={status} onChange={(e) => setStatus(e.target.value)} className="sm:max-w-56">
-          <option value="">All statuses</option>
-          <option value="expired">Expired</option>
-          <option value="today">Expiring Today</option>
-          <option value="soon">Expiring Soon</option>
-          <option value="safe">Safe</option>
+          <option value="">{t("All statuses")}</option>
+          <option value="expired">{t("Expired")}</option>
+          <option value="today">{t("Expiring Today")}</option>
+          <option value="soon">{t("Expiring Soon")}</option>
+          <option value="safe">{t("Safe")}</option>
         </Select>
       </div>
 
@@ -96,7 +97,7 @@ export default function CalendarPage() {
                   setSelected(today);
                 }}
               >
-                Today
+                {t("Today")}
               </Button>
               <Button variant="outline" size="sm" aria-label="Next month" onClick={() => go(1)}>
                 <ChevronRight className="h-4 w-4" />
@@ -138,9 +139,9 @@ export default function CalendarPage() {
           </div>
           <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600">
             <Key cls="bg-red-600" label="Already expired" />
-            <Key cls="bg-red-200" label="Today" />
+            <Key cls="bg-red-200" label={t("Today")} />
             <Key cls="bg-amber-200" label={`Within ${settings.expiry_threshold_days} days`} />
-            <Key cls="bg-brand-200" label="Later" />
+            <Key cls="bg-brand-200" label={t("Later")} />
           </p>
           <p className="mt-2 text-sm text-slate-700">
             This month: <strong>{monthRows.length}</strong> batch{monthRows.length === 1 ? "" : "es"} · <strong>{formatNumber(monthRows.reduce((s, v) => s + v.batch.quantity, 0))}</strong> units expire.
@@ -152,14 +153,14 @@ export default function CalendarPage() {
             <SectionTitle>Expiring on {formatDate(selected, settings.date_format)}</SectionTitle>
             <Card className="divide-y divide-slate-100" data-testid="day-list">
               {selectedRows.length === 0 ? (
-                <EmptyState title="Nothing expires this day">Pick another date on the calendar.</EmptyState>
+                <EmptyState title={t("Nothing expires this day")}>Pick another date on the calendar.</EmptyState>
               ) : (
                 selectedRows.map((v) => <Item key={v.batch.id} v={v} />)
               )}
             </Card>
           </section>
           <section>
-            <SectionTitle>Upcoming expiries</SectionTitle>
+            <SectionTitle>{t("Upcoming expiries")}</SectionTitle>
             <Card className="divide-y divide-slate-100">
               {upcoming.length === 0 ? <EmptyState title="No upcoming expiries" /> : upcoming.map((v) => <Item key={v.batch.id} v={v} showDate />)}
             </Card>

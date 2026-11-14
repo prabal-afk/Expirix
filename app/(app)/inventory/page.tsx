@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n-core";
 import { ArrowDownAZ, ArrowUpAZ, ChevronLeft, ChevronRight, Download, Filter, Package, Pencil, Plus, Trash2, Truck, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -148,7 +149,7 @@ function Inventory() {
   return (
     <div>
       <PageHeader
-        title="Inventory"
+        title={t("Inventory")}
         subtitle={`${rows.length} batch${rows.length === 1 ? "" : "es"} of ${new Set(rows.map((r) => r.product.id)).size} products${anyFilter ? " (filtered)" : ""}`}
         actions={
           <>
@@ -156,7 +157,7 @@ function Inventory() {
               <Download className="h-4 w-4" /> Export CSV
             </Button>
             <LinkButton href="/inventory/add" size="lg">
-              <Plus className="h-5 w-5" /> Add Product
+              <Plus className="h-5 w-5" /> {t("Add Product")}
             </LinkButton>
           </>
         }
@@ -166,7 +167,7 @@ function Inventory() {
       <Card className="mb-4 p-3 sm:p-4">
         <div className="flex flex-col gap-3 sm:flex-row">
           <div className="flex-1">
-            <Input aria-label="Search by product name, brand, barcode or batch" type="search" placeholder="Search name, brand, barcode or batch…" value={qText} onChange={(e) => onSearch(e.target.value)} />
+            <Input aria-label="Search by product name, brand, barcode or batch" type="search" placeholder={t("Search name, brand, barcode or batch…")} value={qText} onChange={(e) => onSearch(e.target.value)} />
           </div>
           <Button variant="outline" onClick={() => setFiltersOpen((o) => !o)} aria-expanded={filtersOpen} className="sm:hidden">
             <Filter className="h-4 w-4" /> Filters {activeFilterCount > 0 && <Pill tone="green">{activeFilterCount}</Pill>}
@@ -186,8 +187,8 @@ function Inventory() {
           </div>
         </div>
         <div className={cx("mt-3 grid gap-3 sm:grid sm:grid-cols-2 lg:grid-cols-6", filtersOpen ? "grid" : "hidden")}>
-          <Select aria-label="Category" value={filters.category} onChange={(e) => setParams({ category: e.target.value || undefined })}>
-            <option value="">All categories</option>
+          <Select aria-label={t("Category")} value={filters.category} onChange={(e) => setParams({ category: e.target.value || undefined })}>
+            <option value="">{t("All categories")}</option>
             {CATEGORIES.map((c) => (
               <option key={c}>{c}</option>
             ))}
@@ -209,9 +210,9 @@ function Inventory() {
           </label>
           <div className="flex gap-2">
             <Select aria-label="Sort by" value={filters.sort} onChange={(e) => setParams({ sort: e.target.value === "expiry" ? undefined : e.target.value, dir: undefined })}>
-              <option value="expiry">Sort: Expiry date</option>
-              <option value="name">Sort: Name</option>
-              <option value="quantity">Sort: Quantity</option>
+              <option value="expiry">{t("Sort: Expiry date")}</option>
+              <option value="name">{t("Sort: Name")}</option>
+              <option value="quantity">{t("Sort: Quantity")}</option>
             </Select>
             <Button variant="outline" aria-label={filters.dir === "asc" ? "Ascending" : "Descending"} onClick={() => setParams({ dir: filters.dir === "asc" ? "desc" : undefined })}>
               {filters.dir === "asc" ? <ArrowUpAZ className="h-4 w-4" /> : <ArrowDownAZ className="h-4 w-4" />}
@@ -239,7 +240,7 @@ function Inventory() {
             action={
               views.length === 0 ? (
                 <LinkButton href="/inventory/add">
-                  <Plus className="h-5 w-5" /> Add your first product
+                  <Plus className="h-5 w-5" /> {t("Add your first product")}
                 </LinkButton>
               ) : (
                 <Button variant="outline" onClick={() => router.replace("/inventory")}>
@@ -259,16 +260,16 @@ function Inventory() {
               <table className="w-full min-w-[1000px] text-left text-sm">
                 <thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-600">
                   <tr>
-                    <Th sortable onClick={() => sortToggle("name")} active={filters.sort === "name"} dir={filters.dir}>Product</Th>
-                    <Th>Category</Th>
-                    <Th>Batch</Th>
+                    <Th sortable onClick={() => sortToggle("name")} active={filters.sort === "name"} dir={filters.dir}>{t("Product")}</Th>
+                    <Th>{t("Category")}</Th>
+                    <Th>{t("Batch")}</Th>
                     <Th sortable onClick={() => sortToggle("quantity")} active={filters.sort === "quantity"} dir={filters.dir} right>Qty</Th>
-                    <Th right>Purchase</Th>
-                    <Th right>Selling</Th>
-                    <Th>Purchased</Th>
-                    <Th sortable onClick={() => sortToggle("expiry")} active={filters.sort === "expiry"} dir={filters.dir}>Expiry</Th>
-                    <Th>Status</Th>
-                    <Th right>Actions</Th>
+                    <Th right>{t("Purchase")}</Th>
+                    <Th right>{t("Selling")}</Th>
+                    <Th>{t("Purchased")}</Th>
+                    <Th sortable onClick={() => sortToggle("expiry")} active={filters.sort === "expiry"} dir={filters.dir}>{t("Expiry")}</Th>
+                    <Th>{t("Status")}</Th>
+                    <Th right>{t("Actions")}</Th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -279,7 +280,7 @@ function Inventory() {
                           {v.product.name}
                         </Link>
                         <div className="text-xs text-slate-600">{v.product.brand}</div>
-                        {v.fefo && rows.filter((r) => r.product.id === v.product.id && r.sellable).length > 1 && <Pill tone="green">Sell first (FEFO)</Pill>}
+                        {v.fefo && rows.filter((r) => r.product.id === v.product.id && r.sellable).length > 1 && <Pill tone="green">{t("Sell first (FEFO)")}</Pill>}
                       </td>
                       <td className="px-3 py-3 text-slate-700">{v.product.category}</td>
                       <td className="px-3 py-3 text-slate-700">{v.batch.batch_no ?? "—"}</td>
@@ -327,12 +328,12 @@ function Inventory() {
                     <StatusBadge status={v.status} empty={v.empty} />
                   </div>
                   <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                    <Cell label="Quantity" value={`${formatNumber(v.batch.quantity)} ${v.product.unit}`} bold />
-                    <Cell label="Batch" value={v.batch.batch_no ?? "—"} />
-                    <Cell label="Expiry" value={`${formatDate(v.batch.expiry_date, settings.date_format)}${v.empty ? "" : ` · ${daysLabel(v.days)}`}`} />
+                    <Cell label={t("Quantity")} value={`${formatNumber(v.batch.quantity)} ${v.product.unit}`} bold />
+                    <Cell label={t("Batch")} value={v.batch.batch_no ?? "—"} />
+                    <Cell label={t("Expiry")} value={`${formatDate(v.batch.expiry_date, settings.date_format)}${v.empty ? "" : ` · ${daysLabel(v.days)}`}`} />
                     <Cell label="Buy / Sell" value={`${money(v.batch.purchase_price)} / ${money(v.batch.selling_price)}`} />
                   </dl>
-                  {v.fefo && rows.filter((r) => r.product.id === v.product.id && r.sellable).length > 1 && <div className="mt-2"><Pill tone="green">Sell this first (FEFO)</Pill></div>}
+                  {v.fefo && rows.filter((r) => r.product.id === v.product.id && r.sellable).length > 1 && <div className="mt-2"><Pill tone="green">{t("Sell this first (FEFO)")}</Pill></div>}
                   <div className="mt-3 flex flex-wrap gap-2">
                     {!v.empty && (
                       <Button size="sm" variant={v.days < 0 ? "danger" : "secondary"} onClick={() => openMovement({ batchId: v.batch.id, type: v.days < 0 ? "expired_removed" : "sold", quantity: v.days < 0 ? v.batch.quantity : undefined })}>
@@ -353,7 +354,7 @@ function Inventory() {
             <table className="w-full min-w-[760px] text-left text-sm">
               <thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-600">
                 <tr>
-                  <Th>Product</Th><Th>Category</Th><Th right>Batches</Th><Th right>Total</Th><Th right>Sellable</Th><Th right>Expired</Th><Th>Next expiry</Th><Th>Status</Th><Th right>Value</Th>
+                  <Th>{t("Product")}</Th><Th>{t("Category")}</Th><Th right>{t("Batches")}</Th><Th right>{t("Total")}</Th><Th right>{t("Sellable")}</Th><Th right>{t("Expired")}</Th><Th>{t("Next expiry")}</Th><Th>{t("Status")}</Th><Th right>{t("Value")}</Th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -395,7 +396,7 @@ function Inventory() {
 
       <ConfirmDialog
         open={toDelete !== null}
-        title="Delete this batch?"
+        title={t("Delete this batch?")}
         confirmLabel="Delete batch"
         loading={deleting}
         onCancel={() => setToDelete(null)}

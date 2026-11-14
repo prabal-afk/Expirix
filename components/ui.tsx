@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n-core";
 import { Loader2, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, type ButtonHTMLAttributes, type ReactNode, type SelectHTMLAttributes, type InputHTMLAttributes, type TextareaHTMLAttributes } from "react";
@@ -138,7 +139,7 @@ export function StatusBadge({ status, empty }: { status: ExpiryStatus; empty?: b
   return (
     <span className={cx("inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold", statusStyles[status])}>
       <span className={cx("h-1.5 w-1.5 rounded-full", dot[status])} aria-hidden />
-      {STATUS_LABEL[status]}
+      {t(STATUS_LABEL[status])}
     </span>
   );
 }
@@ -154,7 +155,7 @@ const levelStyles: Record<AlertLevel, string> = {
 export function LevelBadge({ level }: { level: AlertLevel }) {
   return (
     <span className={cx("inline-flex whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset", levelStyles[level])}>
-      {LEVEL_LABEL[level]}
+      {t(LEVEL_LABEL[level])}
     </span>
   );
 }
@@ -327,7 +328,7 @@ export function ConfirmDialog({
       <div className="text-sm text-slate-700">{body}</div>
       <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
         <Button variant="outline" onClick={onCancel}>
-          Cancel
+          {t("Cancel")}
         </Button>
         <Button variant="danger" onClick={onConfirm} loading={loading}>
           {confirmLabel}

@@ -23,6 +23,7 @@ export function defaultSettings(shopId: string, overrides: Partial<Settings> = {
     timezone: "Asia/Kolkata",
     in_app_alerts: true,
     browser_notifications: false,
+    email_digest: true,
     ...overrides,
   };
 }

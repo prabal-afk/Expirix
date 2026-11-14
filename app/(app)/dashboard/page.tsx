@@ -1,9 +1,11 @@
 "use client";
 
+import { t } from "@/lib/i18n-core";
 import { AlertTriangle, Boxes, Package, PackageX, Plus, ScanBarcode, Timer, TrendingDown, Truck, Wallet } from "lucide-react";
 import Link from "next/link";
 import { useMemo, type ReactNode } from "react";
 import { Bar, BarChart, CartesianGrid, Cell, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { GettingStarted } from "@/components/getting-started";
 import { useUI } from "@/components/ui-context";
 import { Button, Card, EmptyState, LinkButton, PageHeader, SectionTitle, cx } from "@/components/ui";
 import { addDays, daysLabel, formatDate } from "@/lib/dates";
@@ -87,14 +89,14 @@ export default function DashboardPage() {
     },
   ];
 
-  const t = (n: number) => addDays(today, n);
+  const dayOffset = (n: number) => addDays(today, n);
   const bucketLinks: Record<string, string> = {
     expired: "/inventory?status=expired",
     today: "/inventory?status=today",
-    d3: `/inventory?from=${t(1)}&to=${t(3)}`,
-    d7: `/inventory?from=${t(4)}&to=${t(7)}`,
-    d30: `/inventory?from=${t(8)}&to=${t(30)}`,
-    safe: `/inventory?from=${t(31)}`,
+    d3: `/inventory?from=${dayOffset(1)}&to=${dayOffset(3)}`,
+    d7: `/inventory?from=${dayOffset(4)}&to=${dayOffset(7)}`,
+    d30: `/inventory?from=${dayOffset(8)}&to=${dayOffset(30)}`,
+    safe: `/inventory?from=${dayOffset(31)}`,
   };
   const bucketTone: Record<string, string> = {
     expired: "border-red-300 bg-red-50 text-red-800",
@@ -110,34 +112,26 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Dashboard"
+        title={t("Dashboard")}
         subtitle={
           <>
-            What needs attention at <strong>{settings.shop_name}</strong> · {formatDate(today, settings.date_format)}
+            {t("What needs attention at")} <strong>{settings.shop_name}</strong> · {formatDate(today, settings.date_format)}
           </>
         }
         actions={
           <>
             <Button variant="outline" onClick={openScanner}>
-              <ScanBarcode className="h-5 w-5" /> Scan
+              <ScanBarcode className="h-5 w-5" /> {t("Scan")}
             </Button>
             <LinkButton href="/inventory/add" size="lg">
-              <Plus className="h-5 w-5" /> Add Product
+              <Plus className="h-5 w-5" /> {t("Add Product")}
             </LinkButton>
           </>
         }
       />
 
       {empty ? (
-        <Card>
-          <EmptyState
-            icon={<Package className="h-6 w-6" />}
-            title="Your shop is empty"
-            action={<LinkButton href="/inventory/add"><Plus className="h-5 w-5" /> Add your first product</LinkButton>}
-          >
-            Add a product with its expiry date and Expirix will start tracking it. Charts and alerts fill in automatically.
-          </EmptyState>
-        </Card>
+        <GettingStarted />
       ) : (
         <>
           {metrics.expiredBatches > 0 && (
@@ -168,7 +162,7 @@ export default function DashboardPage() {
 
           {/* ---------------- expiry overview ---------------- */}
           <section>
-            <SectionTitle>Expiry overview</SectionTitle>
+            <SectionTitle>{t("Expiry overview")}</SectionTitle>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
               {buckets.map((b) => (
                 <Link key={b.key} href={bucketLinks[b.key]} className={cx("rounded-2xl border p-3.5 transition hover:shadow-md", bucketTone[b.key])}>
@@ -195,7 +189,7 @@ export default function DashboardPage() {
             </SectionTitle>
             <Card className="divide-y divide-slate-100">
               {urgent.length === 0 ? (
-                <EmptyState title="Nothing needs attention">No batch is expired or expiring in the next 30 days. Nice work.</EmptyState>
+                <EmptyState title={t("Nothing needs attention")}>{t("No batch is expired or expiring in the next 30 days. Nice work.")}</EmptyState>
               ) : (
                 urgent.slice(0, 8).map((v) => (
                   <UrgentRow
@@ -208,13 +202,13 @@ export default function DashboardPage() {
                 ))
               )}
             </Card>
-            {urgent.length > 8 && <p className="mt-2 text-center text-sm text-slate-600">Showing 8 of {urgent.length}. <Link className="font-semibold text-brand-700 hover:underline" href={`/inventory?to=${t(30)}`}>See all in Inventory</Link></p>}
+            {urgent.length > 8 && <p className="mt-2 text-center text-sm text-slate-600">Showing 8 of {urgent.length}. <Link className="font-semibold text-brand-700 hover:underline" href={`/inventory?to=${dayOffset(30)}`}>{t("See all in Inventory")}</Link></p>}
           </section>
 
           {/* ---------------- charts ---------------- */}
           <section className="grid gap-4 lg:grid-cols-2">
             <Card className="p-4 lg:col-span-2">
-              <SectionTitle>Batches expiring over the next 30 days</SectionTitle>
+              <SectionTitle>{t("Batches expiring over the next 30 days")}</SectionTitle>
               <div className="h-64" role="img" aria-label="Bar chart of the number of batches expiring on each of the next 30 days">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={byDay} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
@@ -238,16 +232,16 @@ export default function DashboardPage() {
                 </ResponsiveContainer>
               </div>
               <p className="mt-1 flex flex-wrap gap-x-4 text-xs text-slate-600">
-                <Legend color={COLORS.red} label="Today" />
+                <Legend color={COLORS.red} label={t("Today")} />
                 <Legend color={COLORS.amber} label={`Within ${settings.expiry_threshold_days} days`} />
-                <Legend color={COLORS.blue} label="Later" />
+                <Legend color={COLORS.blue} label={t("Later")} />
               </p>
             </Card>
 
             <Card className="p-4">
-              <SectionTitle>Inventory by expiry status (units)</SectionTitle>
+              <SectionTitle>{t("Inventory by expiry status (units)")}</SectionTitle>
               {doughnutTotal === 0 ? (
-                <EmptyState title="No stock yet" />
+                <EmptyState title={t("No stock yet")} />
               ) : (
                 <div className="flex flex-col items-center gap-4 sm:flex-row">
                   <div className="h-52 w-52 shrink-0" role="img" aria-label="Doughnut chart of units by expiry status">
@@ -280,9 +274,9 @@ export default function DashboardPage() {
             </Card>
 
             <Card className="p-4">
-              <SectionTitle>Estimated loss over time</SectionTitle>
+              <SectionTitle>{t("Estimated loss over time")}</SectionTitle>
               {lossTotal === 0 ? (
-                <EmptyState title="No waste recorded yet">When you remove expired or damaged stock, the cost appears here.</EmptyState>
+                <EmptyState title={t("No waste recorded yet")}>{t("When you remove expired or damaged stock, the cost appears here.")}</EmptyState>
               ) : (
                 <>
                   <div className="h-52" role="img" aria-label="Line chart of recorded waste cost per month for the last 6 months">
@@ -303,14 +297,14 @@ export default function DashboardPage() {
           </section>
 
           {/* ---------------- quick actions ---------------- */}
-          <section aria-label="Quick actions">
-            <SectionTitle>Quick actions</SectionTitle>
+          <section aria-label={t("Quick actions")}>
+            <SectionTitle>{t("Quick actions")}</SectionTitle>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-              <QuickTile href="/inventory/add" icon={<Plus className="h-5 w-5" />} label="Add Product" />
-              <QuickTile onClick={openScanner} icon={<ScanBarcode className="h-5 w-5" />} label="Scan Barcode" />
-              <QuickTile href="/inventory?status=expiring" icon={<Timer className="h-5 w-5" />} label="View Expiring Items" />
-              <QuickTile href="/inventory?status=expired" icon={<PackageX className="h-5 w-5" />} label="View Expired Stock" />
-              <QuickTile onClick={() => openMovement()} icon={<Truck className="h-5 w-5" />} label="Record Stock Movement" />
+              <QuickTile href="/inventory/add" icon={<Plus className="h-5 w-5" />} label={t("Add Product")} />
+              <QuickTile onClick={openScanner} icon={<ScanBarcode className="h-5 w-5" />} label={t("Scan Barcode")} />
+              <QuickTile href="/inventory?status=expiring" icon={<Timer className="h-5 w-5" />} label={t("View Expiring Items")} />
+              <QuickTile href="/inventory?status=expired" icon={<PackageX className="h-5 w-5" />} label={t("View Expired Stock")} />
+              <QuickTile onClick={() => openMovement()} icon={<Truck className="h-5 w-5" />} label={t("Record Stock Movement")} />
             </div>
           </section>
           
@@ -370,10 +364,10 @@ function UrgentRow({ v, others, onRemove, onUpdate }: { v: BatchView; others: nu
         </p>
       </div>
       <div className="grid flex-1 grid-cols-2 gap-x-4 gap-y-1 text-sm sm:grid-cols-4 lg:w-[40%]">
-        <Info label="Quantity" value={`${v.batch.quantity} ${v.product.unit}`} />
-        <Info label="Expiry date" value={formatDate(v.batch.expiry_date, settings.date_format)} />
-        <Info label="Status" value={daysLabel(v.days)} strong={v.days <= 1} />
-        <Info label="Stock value" value={formatMoney(v.value, settings.currency)} />
+        <Info label={t("Quantity")} value={`${v.batch.quantity} ${v.product.unit}`} />
+        <Info label={t("Expiry date")} value={formatDate(v.batch.expiry_date, settings.date_format)} />
+        <Info label={t("Status")} value={daysLabel(v.days)} strong={v.days <= 1} />
+        <Info label={t("Stock value")} value={formatMoney(v.value, settings.currency)} />
       </div>
       <div className="lg:w-[30%]">
         <p className={cx("text-sm font-medium", action.tone === "red" ? "text-red-800" : action.tone === "amber" ? "text-amber-900" : "text-slate-700")}>{action.text}</p>

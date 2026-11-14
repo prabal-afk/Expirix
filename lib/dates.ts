@@ -1,3 +1,4 @@
+import { getLang } from "./i18n-core";
 import type { ISODate, Settings } from "./types";
 
 /** Today's calendar date in the given IANA time zone, as YYYY-MM-DD. */
@@ -73,6 +74,13 @@ export function formatDateTime(ts: string, fmt: Settings["date_format"], timezon
 }
 
 export function daysLabel(daysLeft: number): string {
+  if (getLang() === "hi") {
+    if (daysLeft < -1) return `${Math.abs(daysLeft)} दिन पहले एक्सपायर हुआ`;
+    if (daysLeft === -1) return "कल एक्सपायर हुआ";
+    if (daysLeft === 0) return "आज एक्सपायर होगा";
+    if (daysLeft === 1) return "कल एक्सपायर होगा";
+    return `${daysLeft} दिन में एक्सपायर`;
+  }
   if (daysLeft < -1) return `Expired ${Math.abs(daysLeft)} days ago`;
   if (daysLeft === -1) return "Expired yesterday";
   if (daysLeft === 0) return "Expires today";

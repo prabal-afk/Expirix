@@ -46,6 +46,7 @@ export interface AppContextValue {
   enterDemo: () => void;
   signIn: (email: string, password: string) => Promise<Result>;
   signUp: (email: string, password: string, shopName: string, ownerName: string) => Promise<Result<{ needsConfirmation: boolean }>>;
+  requestPasswordReset: (email: string) => Promise<Result>;
   signOut: () => Promise<void>;
   // inventory
   addBatch: (v: ParsedBatchForm, opts?: { productId?: string }) => Promise<Result<{ productId: string; batchId: string; merged: boolean }>>;
@@ -95,6 +96,7 @@ const EMPTY: AppData = {
     timezone: "Asia/Kolkata",
     in_app_alerts: true,
     browser_notifications: false,
+    email_digest: true,
   },
 };
 
@@ -312,6 +314,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return { ok: true, needsConfirmation: !r.session };
   };
 
+  const requestPasswordReset: AppContextValue["requestPasswordReset"] = async (email) => {
+    const sb = getSupabase();
+    if (!sb) return { ok: false, error: "Cloud login is not set up." };
+    const { error: e } = await sb.auth.resetPasswordForEmail(email.trim(), { redirectTo: `${window.location.origin}/reset-password` });
+    if (e) return { ok: false, error: e.message.toLowerCase().includes("rate") ? "Too many requests. Wait a minute and try again." : e.message };
+    return { ok: true };
+  };
+
   const signOut = useCallback(async () => {
     const sb = getSupabase();
     try {
@@ -508,6 +518,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     enterDemo,
     signIn,
     signUp,
+    requestPasswordReset,
     signOut,
     addBatch,
     updateBatch,

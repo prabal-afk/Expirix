@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n-core";
 import { AlertTriangle, Check, Info, Link2, ScanBarcode } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
@@ -161,7 +162,7 @@ export function ProductForm({ mode, batchId, productId, barcode }: { mode: "add"
         <p className="font-semibold">That batch could not be found.</p>
         <p className="mt-1 text-sm text-slate-600">It may have been deleted.</p>
         <Button className="mt-4" onClick={() => router.push("/inventory")}>
-          Back to inventory
+          {t("Back to inventory")}
         </Button>
       </Card>
     );
@@ -204,9 +205,9 @@ export function ProductForm({ mode, batchId, productId, barcode }: { mode: "add"
       )}
 
       <Card className="p-4 sm:p-5">
-        <h2 className="mb-4 text-base font-bold">Product</h2>
+        <h2 className="mb-4 text-base font-bold">{t("Product")}</h2>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Product name" htmlFor="name" required error={errors.name} className="sm:col-span-2">
+          <Field label={t("Product name")} htmlFor="name" required error={errors.name} className="sm:col-span-2">
             <Input id="name" value={v.name} onChange={set("name")} invalid={!!errors.name} disabled={productLocked} placeholder="e.g. Amul Taaza Milk 500ml" autoComplete="off" />
           </Field>
 
@@ -228,10 +229,10 @@ export function ProductForm({ mode, batchId, productId, barcode }: { mode: "add"
             </div>
           )}
 
-          <Field label="Brand" htmlFor="brand" required error={errors.brand}>
+          <Field label={t("Brand")} htmlFor="brand" required error={errors.brand}>
             <Input id="brand" value={v.brand} onChange={set("brand")} invalid={!!errors.brand} disabled={productLocked} placeholder="e.g. Amul" />
           </Field>
-          <Field label="Category" htmlFor="category" required error={errors.category}>
+          <Field label={t("Category")} htmlFor="category" required error={errors.category}>
             <Select id="category" value={v.category} onChange={set("category")} invalid={!!errors.category} disabled={productLocked}>
               <option value="">Choose category…</option>
               {CATEGORIES.map((c) => (
@@ -239,17 +240,17 @@ export function ProductForm({ mode, batchId, productId, barcode }: { mode: "add"
               ))}
             </Select>
           </Field>
-          <Field label="Barcode (optional)" htmlFor="barcode" error={errors.barcode} hint="Type it, or tap Scan.">
+          <Field label={t("Barcode (optional)")} htmlFor="barcode" error={errors.barcode} hint="Type it, or tap Scan.">
             <div className="flex gap-2">
               <Input id="barcode" value={v.barcode} onChange={set("barcode")} invalid={!!errors.barcode} disabled={productLocked} inputMode="numeric" placeholder="e.g. 8901234567890" />
               {!productLocked && (
-                <Button type="button" variant="outline" onClick={openScanner} aria-label="Scan barcode">
+                <Button type="button" variant="outline" onClick={openScanner} aria-label={t("Scan barcode")}>
                   <ScanBarcode className="h-5 w-5" />
                 </Button>
               )}
             </div>
           </Field>
-          <Field label="Unit" htmlFor="unit" required error={errors.unit}>
+          <Field label={t("Unit")} htmlFor="unit" required error={errors.unit}>
             <Select id="unit" value={v.unit} onChange={set("unit")} disabled={productLocked}>
               {UNITS.map((u) => (
                 <option key={u}>{u}</option>
@@ -268,10 +269,10 @@ export function ProductForm({ mode, batchId, productId, barcode }: { mode: "add"
       <Card className="p-4 sm:p-5">
         <h2 className="mb-4 text-base font-bold">{mode === "edit" ? "This batch" : "Batch details"}</h2>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Quantity" htmlFor="quantity" required error={errors.quantity}>
+          <Field label={t("Quantity")} htmlFor="quantity" required error={errors.quantity}>
             <Input id="quantity" type="number" inputMode="decimal" min="0" step="any" value={v.quantity} onChange={set("quantity")} invalid={!!errors.quantity} placeholder="0" />
           </Field>
-          <Field label="Batch number (optional)" htmlFor="batch_no" error={errors.batch_no}>
+          <Field label={t("Batch number (optional)")} htmlFor="batch_no" error={errors.batch_no}>
             <Input id="batch_no" value={v.batch_no} onChange={set("batch_no")} placeholder="e.g. B1256" />
           </Field>
           <Field label="Purchase price per unit (₹)" htmlFor="purchase_price" required error={errors.purchase_price}>
@@ -285,13 +286,13 @@ export function ProductForm({ mode, batchId, productId, barcode }: { mode: "add"
               </p>
             )}
           </Field>
-          <Field label="Purchase date" htmlFor="purchase_date" required error={errors.purchase_date}>
+          <Field label={t("Purchase date")} htmlFor="purchase_date" required error={errors.purchase_date}>
             <Input id="purchase_date" type="date" value={v.purchase_date} onChange={set("purchase_date")} invalid={!!errors.purchase_date} />
           </Field>
-          <Field label="Manufacturing date (optional)" htmlFor="mfg_date" error={errors.mfg_date}>
+          <Field label={t("Manufacturing date (optional)")} htmlFor="mfg_date" error={errors.mfg_date}>
             <Input id="mfg_date" type="date" value={v.mfg_date} onChange={set("mfg_date")} invalid={!!errors.mfg_date} />
           </Field>
-          <Field label="Expiry date" htmlFor="expiry_date" required error={errors.expiry_date} className="sm:col-span-2">
+          <Field label={t("Expiry date")} htmlFor="expiry_date" required error={errors.expiry_date} className="sm:col-span-2">
             <Input id="expiry_date" type="date" value={v.expiry_date} onChange={set("expiry_date")} invalid={!!errors.expiry_date} />
             <div className="mt-2 flex flex-wrap gap-2" aria-label="Quick expiry dates">
               {chip("1 week", 7)}
@@ -314,7 +315,7 @@ export function ProductForm({ mode, batchId, productId, barcode }: { mode: "add"
               </p>
             )}
           </Field>
-          <Field label="Notes (optional)" htmlFor="notes" error={errors.notes} className="sm:col-span-2">
+          <Field label={t("Notes (optional)")} htmlFor="notes" error={errors.notes} className="sm:col-span-2">
             <Textarea id="notes" value={v.notes} onChange={set("notes")} disabled={productLocked} maxLength={500} rows={2} />
           </Field>
         </div>
@@ -328,11 +329,11 @@ export function ProductForm({ mode, batchId, productId, barcode }: { mode: "add"
 
       <div className="sticky bottom-20 z-10 -mx-4 flex gap-2 border-t border-slate-200 bg-white/95 p-3 backdrop-blur sm:static sm:mx-0 sm:justify-end sm:border-0 sm:bg-transparent sm:p-0 lg:bottom-0">
         <Button type="button" variant="outline" size="lg" className="hidden sm:inline-flex" onClick={() => router.back()}>
-          Cancel
+          {t("Cancel")}
         </Button>
         {mode === "add" && (
           <Button type="button" variant="secondary" size="lg" className="flex-1 px-3 sm:flex-none sm:px-5" loading={busy === "another"} disabled={busy === "save"} onClick={() => void submit(true)}>
-            <span className="sm:hidden">Save & add more</span>
+            <span className="sm:hidden">{t("Save & add more")}</span>
             <span className="hidden sm:inline">Save & add another batch</span>
           </Button>
         )}

@@ -109,6 +109,7 @@ export interface Settings {
   timezone: string; // Asia/Kolkata
   in_app_alerts: boolean;
   browser_notifications: boolean;
+  email_digest: boolean; // daily summary email (sent by the server job, cloud accounts only)
 }
 
 export interface AppData {

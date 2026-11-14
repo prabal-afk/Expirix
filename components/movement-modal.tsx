@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n-core";
 import { useMemo, useState } from "react";
 import { daysLabel, formatDate } from "@/lib/dates";
 import { planMovement } from "@/lib/movements";
@@ -25,7 +26,7 @@ const HELP: Record<MovementType, string> = {
 
 export function MovementModal({ request, onClose }: { request: MovementRequest | null; onClose: () => void }) {
   return (
-    <Modal open={request !== null} onClose={onClose} title="Record stock movement">
+    <Modal open={request !== null} onClose={onClose} title={t("Record stock movement")}>
       {request && <MovementForm key={JSON.stringify(request)} request={request} onClose={onClose} />}
     </Modal>
   );
@@ -79,7 +80,7 @@ function MovementForm({ request, onClose }: { request: MovementRequest; onClose:
 
   return (
     <form onSubmit={submit} className="space-y-4" noValidate>
-      <Field label="Batch" htmlFor="mv-batch" required>
+      <Field label={t("Batch")} htmlFor="mv-batch" required>
         {options.length > 8 && !request.batchId && (
           <Input aria-label="Search batches" placeholder="Type to filter products…" value={filter} onChange={(e) => setFilter(e.target.value)} className="mb-2" />
         )}
@@ -100,11 +101,11 @@ function MovementForm({ request, onClose }: { request: MovementRequest; onClose:
         </div>
       )}
 
-      <Field label="What happened?" htmlFor="mv-type" hint={HELP[effectiveType]}>
+      <Field label={t("What happened?")} htmlFor="mv-type" hint={HELP[effectiveType]}>
         <Select id="mv-type" value={effectiveType} onChange={(e) => setType(e.target.value as MovementType)}>
-          {allowed.map((t) => (
-            <option key={t} value={t}>
-              {MOVEMENT_LABELS[t]}
+          {allowed.map((mt) => (
+            <option key={mt} value={mt}>
+              {t(MOVEMENT_LABELS[mt])}
             </option>
           ))}
         </Select>
@@ -130,7 +131,7 @@ function MovementForm({ request, onClose }: { request: MovementRequest; onClose:
         </p>
       )}
 
-      <Field label="Notes (optional)" htmlFor="mv-notes">
+      <Field label={t("Notes (optional)")} htmlFor="mv-notes">
         <Textarea id="mv-notes" value={notes} onChange={(e) => setNotes(e.target.value)} maxLength={300} rows={2} />
       </Field>
 
@@ -141,7 +142,7 @@ function MovementForm({ request, onClose }: { request: MovementRequest; onClose:
       )}
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
         <Button type="button" variant="outline" onClick={onClose}>
-          Cancel
+          {t("Cancel")}
         </Button>
         <Button type="submit" loading={busy}>
           Record movement

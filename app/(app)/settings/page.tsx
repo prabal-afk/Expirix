@@ -1,8 +1,11 @@
 "use client";
 
+import { t } from "@/lib/i18n-core";
 import { Download, LogOut, RotateCcw, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { AccountCard, DeliveryCard } from "@/components/settings-extras";
+import { LanguageSwitch } from "@/lib/i18n";
 import { Button, Card, ConfirmDialog, Field, Input, PageHeader, Select, Toggle } from "@/components/ui";
 import { downloadCSV } from "@/lib/csv";
 import { formatDate, formatDateTime } from "@/lib/dates";
@@ -131,37 +134,37 @@ export default function SettingsPage() {
 
   return (
     <form onSubmit={save} className="mx-auto max-w-3xl space-y-5" noValidate>
-      <PageHeader title="Settings" subtitle="Shop details, alert rules and preferences." />
+      <PageHeader title={t("Settings")} subtitle={t("Shop details, alert rules and preferences.")} />
 
       <Card className="p-4 sm:p-5">
-        <h2 className="mb-4 text-base font-bold">Shop profile</h2>
+        <h2 className="mb-4 text-base font-bold">{t("Shop profile")}</h2>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Shop name" htmlFor="shop_name" required error={errors.shop_name}>
+          <Field label={t("Shop name")} htmlFor="shop_name" required error={errors.shop_name}>
             <Input id="shop_name" value={f.shop_name} onChange={str("shop_name")} invalid={!!errors.shop_name} />
           </Field>
-          <Field label="Owner name" htmlFor="owner_name" required error={errors.owner_name}>
+          <Field label={t("Owner name")} htmlFor="owner_name" required error={errors.owner_name}>
             <Input id="owner_name" value={f.owner_name} onChange={str("owner_name")} invalid={!!errors.owner_name} />
           </Field>
-          <Field label="Phone" htmlFor="phone" error={errors.phone}>
+          <Field label={t("Phone")} htmlFor="phone" error={errors.phone}>
             <Input id="phone" type="tel" value={f.phone} onChange={str("phone")} />
           </Field>
-          <Field label="Email" htmlFor="email" error={errors.email}>
+          <Field label={t("Email")} htmlFor="email" error={errors.email}>
             <Input id="email" type="email" value={f.email} onChange={str("email")} invalid={!!errors.email} />
           </Field>
-          <Field label="Address" htmlFor="address" className="sm:col-span-2">
+          <Field label={t("Address")} htmlFor="address" className="sm:col-span-2">
             <Input id="address" value={f.address} onChange={str("address")} />
           </Field>
         </div>
       </Card>
 
       <Card className="p-4 sm:p-5">
-        <h2 className="mb-1 text-base font-bold">Expiry & stock rules</h2>
+        <h2 className="mb-1 text-base font-bold">{t("Expiry & stock rules")}</h2>
         <p className="mb-4 text-sm text-slate-600">Defaults suit a small kirana store. Change them any time; statuses update straight away.</p>
         <div className="grid gap-4 sm:grid-cols-2">
           {num("expiry_threshold_days", "“Expiring Soon” window (days)", "Batches expiring within this many days are shown as Expiring Soon. Default 7.")}
           {num("low_stock_default", "Default low-stock level (units)", "Used when a product has no minimum of its own.")}
         </div>
-        <h3 className="mb-2 mt-5 text-sm font-bold">Alert thresholds (days before expiry)</h3>
+        <h3 className="mb-2 mt-5 text-sm font-bold">{t("Alert thresholds (days before expiry)")}</h3>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {num("alert_upcoming_days", "Upcoming")}
           {num("alert_warning_days", "Warning")}
@@ -172,15 +175,22 @@ export default function SettingsPage() {
       </Card>
 
       <Card className="p-4 sm:p-5">
-        <h2 className="mb-2 text-base font-bold">Notifications</h2>
-        <Toggle id="in_app" checked={f.in_app_alerts} onChange={(v) => { setF((s) => ({ ...s, in_app_alerts: v })); setSaved(false); }} label="In-app alerts" description="Always shown in Alerts & Notifications and the bell icon." />
-        <Toggle id="browser" checked={f.browser_notifications} onChange={(v) => { void toggleBrowser(v); setSaved(false); }} label="Browser notifications" description="A pop-up when new alerts appear while Expirix is open. Your browser will ask for permission. This is not background push, SMS or WhatsApp." />
+        <h2 className="mb-2 text-base font-bold">{t("Notifications")}</h2>
+        <Toggle id="in_app" checked={f.in_app_alerts} onChange={(v) => { setF((s) => ({ ...s, in_app_alerts: v })); setSaved(false); }} label={t("In-app alerts")} description="Always shown in Alerts & Notifications and the bell icon." />
+        <Toggle id="browser" checked={f.browser_notifications} onChange={(v) => { void toggleBrowser(v); setSaved(false); }} label={t("Browser notifications")} description="A pop-up when new alerts appear while Expirix is open. Your browser will ask for permission." />
       </Card>
 
       <Card className="p-4 sm:p-5">
-        <h2 className="mb-4 text-base font-bold">Region & format</h2>
+        <h2 className="mb-2 text-base font-bold">{t("Language")}</h2>
+        <LanguageSwitch />
+      </Card>
+
+      <DeliveryCard />
+
+      <Card className="p-4 sm:p-5">
+        <h2 className="mb-4 text-base font-bold">{t("Region & format")}</h2>
         <div className="grid gap-4 sm:grid-cols-3">
-          <Field label="Currency" htmlFor="currency">
+          <Field label={t("Currency")} htmlFor="currency">
             <Select id="currency" value={f.currency} onChange={str("currency")}>
               <option value="INR">INR (₹)</option>
               <option value="USD">USD ($)</option>
@@ -189,14 +199,14 @@ export default function SettingsPage() {
               <option value="AED">AED (د.إ)</option>
             </Select>
           </Field>
-          <Field label="Date format" htmlFor="date_format">
+          <Field label={t("Date format")} htmlFor="date_format">
             <Select id="date_format" value={f.date_format} onChange={str("date_format")}>
               <option value="DD/MM/YYYY">DD/MM/YYYY</option>
               <option value="MM/DD/YYYY">MM/DD/YYYY</option>
               <option value="YYYY-MM-DD">YYYY-MM-DD</option>
             </Select>
           </Field>
-          <Field label="Time zone" htmlFor="timezone" hint="Decides when “today” changes.">
+          <Field label={t("Time zone")} htmlFor="timezone" hint="Decides when “today” changes.">
             <Select id="timezone" value={f.timezone} onChange={str("timezone")}>
               {TIMEZONES.map((t) => (
                 <option key={t}>{t}</option>
@@ -214,8 +224,8 @@ export default function SettingsPage() {
       </div>
 
       <Card className="p-4 sm:p-5" id="data">
-        <h2 className="mb-1 text-base font-bold">Your data</h2>
-        <p className="mb-4 text-sm text-slate-600">Download your records any time.</p>
+        <h2 className="mb-1 text-base font-bold">{t("Your data")}</h2>
+        <p className="mb-4 text-sm text-slate-600">{t("Download your records any time.")}</p>
         <div className="flex flex-wrap gap-2">
           <Button type="button" variant="outline" onClick={exportInventory}>
             <Download className="h-4 w-4" /> Inventory (CSV)
@@ -246,8 +256,10 @@ export default function SettingsPage() {
         </div>
       </Card>
 
+      <AccountCard />
+
       <Card className="p-4 sm:p-5">
-        <h2 className="mb-2 text-base font-bold">Account & session</h2>
+        <h2 className="mb-2 text-base font-bold">{t("Account & session")}</h2>
         <dl className="mb-4 grid gap-2 text-sm sm:grid-cols-2">
           <div>
             <dt className="text-xs text-slate-500">Mode</dt>

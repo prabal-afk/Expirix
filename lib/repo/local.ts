@@ -160,6 +160,7 @@ function pickPrefs(s: Settings): Partial<Settings> {
     low_stock_default: s.low_stock_default,
     in_app_alerts: s.in_app_alerts,
     browser_notifications: s.browser_notifications,
+    email_digest: s.email_digest,
   };
 }
 

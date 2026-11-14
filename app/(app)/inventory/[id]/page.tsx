@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n-core";
 import { ArrowLeft, Download, Lightbulb, Pencil, Plus, Trash2, Truck } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -36,7 +37,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
   if (!product || !sum)
     return (
       <Card>
-        <EmptyState title="Product not found" action={<LinkButton href="/inventory">Back to inventory</LinkButton>}>
+        <EmptyState title={t("Product not found")} action={<LinkButton href="/inventory">{t("Back to inventory")}</LinkButton>}>
           It may have been deleted.
         </EmptyState>
       </Card>
@@ -79,7 +80,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
     <div className="space-y-6">
       <div>
         <Link href="/inventory" className="mb-3 inline-flex items-center gap-1 text-sm font-semibold text-slate-600 hover:text-slate-900">
-          <ArrowLeft className="h-4 w-4" /> Inventory
+          <ArrowLeft className="h-4 w-4" /> {t("Inventory")}
         </Link>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
@@ -102,10 +103,10 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
       </div>
 
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-4" aria-label="Product summary">
-        <Stat label="On hand" value={`${formatNumber(sum.totalQty)} ${product.unit}`} />
-        <Stat label="Sellable" value={`${formatNumber(sum.sellableQty)} ${product.unit}`} tone="green" sub={sum.low ? `Low (min ${sum.minStock})` : undefined} />
-        <Stat label="Expired on shelf" value={`${formatNumber(sum.expiredQty)} ${product.unit}`} tone={sum.expiredQty ? "red" : undefined} />
-        <Stat label="Stock value" value={money(value)} sub="at purchase price" />
+        <Stat label={t("On hand")} value={`${formatNumber(sum.totalQty)} ${product.unit}`} />
+        <Stat label={t("Sellable")} value={`${formatNumber(sum.sellableQty)} ${product.unit}`} tone="green" sub={sum.low ? `Low (min ${sum.minStock})` : undefined} />
+        <Stat label={t("Expired on shelf")} value={`${formatNumber(sum.expiredQty)} ${product.unit}`} tone={sum.expiredQty ? "red" : undefined} />
+        <Stat label={t("Stock value")} value={money(value)} sub="at purchase price" />
       </section>
 
       {/* FEFO */}
@@ -169,11 +170,11 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
                     <StatusBadge status={v.status} empty={v.empty} />
                   </div>
                   <dl className="mt-3 grid grid-cols-2 gap-3 text-sm sm:grid-cols-5">
-                    <D label="Quantity" value={`${formatNumber(v.batch.quantity)} ${product.unit}`} bold />
-                    <D label="Purchase price" value={money(v.batch.purchase_price)} />
-                    <D label="Selling price" value={money(v.batch.selling_price)} />
-                    <D label="Purchased" value={formatDate(v.batch.purchase_date, settings.date_format)} />
-                    <D label="Stock value" value={money(v.value)} />
+                    <D label={t("Quantity")} value={`${formatNumber(v.batch.quantity)} ${product.unit}`} bold />
+                    <D label={t("Purchase price")} value={money(v.batch.purchase_price)} />
+                    <D label={t("Selling price")} value={money(v.batch.selling_price)} />
+                    <D label={t("Purchased")} value={formatDate(v.batch.purchase_date, settings.date_format)} />
+                    <D label={t("Stock value")} value={money(v.value)} />
                   </dl>
                   {tip && (v.days <= settings.expiry_threshold_days || v.days < 0) && (
                     <p className={cx("mt-3 rounded-lg px-3 py-2 text-sm font-medium", tip.tone === "red" ? "bg-red-100 text-red-900" : "bg-amber-50 text-amber-900")}>{tip.text}</p>
@@ -213,13 +214,13 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
         </SectionTitle>
         <Card className="divide-y divide-slate-100">
           {history.length === 0 ? (
-            <EmptyState title="No movements yet">Every sale, delivery, removal and correction is logged here.</EmptyState>
+            <EmptyState title={t("No movements yet")}>Every sale, delivery, removal and correction is logged here.</EmptyState>
           ) : (
             (showAll ? history : history.slice(0, 10)).map((m) => (
               <div key={m.id} className="flex items-start justify-between gap-3 p-3.5 text-sm">
                 <div className="min-w-0">
                   <p className="font-semibold text-slate-900">
-                    {MOVEMENT_LABELS[m.type]}
+                    {t(MOVEMENT_LABELS[m.type])}
                     {m.batch_no && <span className="font-normal text-slate-600"> · batch {m.batch_no}</span>}
                   </p>
                   <p className="text-xs text-slate-600">
@@ -258,7 +259,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
 
       <ConfirmDialog
         open={delBatch !== null}
-        title="Delete this batch?"
+        title={t("Delete this batch?")}
         confirmLabel="Delete batch"
         loading={busy}
         onCancel={() => setDelBatch(null)}
@@ -274,7 +275,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
       />
       <ConfirmDialog
         open={delProduct}
-        title="Delete this product?"
+        title={t("Delete this product?")}
         confirmLabel="Delete product"
         loading={busy}
         onCancel={() => setDelProduct(false)}
