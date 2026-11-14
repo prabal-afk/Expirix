@@ -5,6 +5,7 @@ import { BrandMark } from "@/components/brand-mark";
 import { LanguageSwitch } from "@/lib/i18n";
 import { LoginArt } from "@/components/login-art";
 import { Info, ShieldCheck, Timer, TrendingDown } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Logo } from "@/components/shell";
@@ -163,6 +164,12 @@ export default function LoginPage() {
               </div>
             )}
           </Card>
+          <p className="mt-4 text-center text-xs text-slate-600">
+            {supabaseConfigured && tab === "up" ? t("By creating an account you agree to the") : t("By using Expirix you agree to the")}{" "}
+            <Link href="/terms" className="font-semibold text-brand-700 hover:underline">{t("Terms")}</Link>
+            {" "}{t("and")}{" "}
+            <Link href="/privacy" className="font-semibold text-brand-700 hover:underline">{t("Privacy Policy")}</Link>.
+          </p>
         </div>
       </div>
     </div>
